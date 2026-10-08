@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1000" viewBox="0 0 1440 1000" role="img" aria-labelledby="title desc">
+  <title id="title">RAG pipeline của dự án basic-rag-demo</title>
+  <desc id="desc">Sơ đồ hai giai đoạn: nạp PDF, semantic chunking, embedding và lưu FAISS; sau đó truy vấn, tìm năm đoạn gần nhất, ghép prompt và sinh câu trả lời bằng Ollama.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6f8fc"/><stop offset="1" stop-color="#eef3fb"/></linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e7f1ff"/><stop offset="1" stop-color="#d8e8ff"/></linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5f8f1"/><stop offset="1" stop-color="#d2f0e4"/></linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f2eaff"/><stop offset="1" stop-color="#e7dcff"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#17304f" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M1 1 11 6 1 11Z" fill="#68809f"/></marker>
+    <style>
+      .title{font:700 34px 'Segoe UI',Arial,sans-serif;fill:#172b46}.sub{font:400 16px 'Segoe UI',Arial,sans-serif;fill:#64758b}
+      .lane{font:700 17px 'Segoe UI',Arial,sans-serif;letter-spacing:1.1px;fill:#38516f}.head{font:700 18px 'Segoe UI',Arial,sans-serif;fill:#203650}.body{font:400 14px 'Segoe UI',Arial,sans-serif;fill:#52667e}.small{font:600 12px 'Segoe UI',Arial,sans-serif;fill:#54708d}
+      .card{stroke:#d5dfeb;stroke-width:1.2;rx:18;filter:url(#shadow)}.arrow{stroke:#68809f;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.note{font:600 13px 'Segoe UI',Arial,sans-serif;fill:#46617d}
+    </style>
+  </defs>
+  <rect width="1440" height="1000" fill="url(#bg)"/>
+  <text x="64" y="67" class="title">RAG pipeline · basic-rag-demo</text>
+  <text x="64" y="98" class="sub">Sơ đồ theo luồng thực thi trong loader.py · LangChain + Ollama + FAISS</text>
+
+  <rect x="50" y="128" width="1340" height="360" rx="24" fill="#ffffff" opacity=".78" stroke="#e0e8f1"/>
+  <text x="78" y="165" class="lane">1 · NẠP TÀI LIỆU VÀ LẬP CHỈ MỤC (KHI KHỞI ĐỘNG)</text>
+
+  <rect class="card" x="78" y="205" width="190" height="126" fill="#fff4df" stroke="#f0dfbe"/>
+  <text x="173" y="241" text-anchor="middle" class="head">Tài liệu PDF</text>
+  <text x="173" y="269" text-anchor="middle" class="body">Thư mục docs/</text>
+  <text x="173" y="293" text-anchor="middle" class="small">DirectoryLoader · *.pdf</text>
+
+  <rect class="card" x="322" y="205" width="202" height="126" fill="#ffffff" stroke="#d5dfeb"/>
+  <text x="423" y="241" text-anchor="middle" class="head">Đọc nội dung</text>
+  <text x="423" y="269" text-anchor="middle" class="body">UnstructuredFileLoader</text>
+  <text x="423" y="293" text-anchor="middle" class="small">PDF → Documents</text>
+
+  <rect class="card" x="578" y="205" width="218" height="126" fill="url(#blue)" stroke="#c9daf3"/>
+  <text x="687" y="241" text-anchor="middle" class="head">Chia đoạn ngữ nghĩa</text>
+  <text x="687" y="269" text-anchor="middle" class="body">SemanticChunker</text>
+  <text x="687" y="293" text-anchor="middle" class="small">breakpoint = 0.85</text>
+
+  <rect class="card" x="850" y="205" width="220" height="126" fill="url(#green)" stroke="#c6e8d9"/>
+  <text x="960" y="241" text-anchor="middle" class="head">Tạo embedding</text>
+  <text x="960" y="269" text-anchor="middle" class="body">OllamaEmbeddings</text>
+  <text x="960" y="293" text-anchor="middle" class="small">qwen3-embedding:0.6b</text>
+
+  <rect class="card" x="1124" y="205" width="222" height="126" fill="url(#violet)" stroke="#ded2f4"/>
+  <text x="1235" y="241" text-anchor="middle" class="head">Chỉ mục vector</text>
+  <text x="1235" y="269" text-anchor="middle" class="body">FAISS.from_documents</text>
+  <text x="1235" y="293" text-anchor="middle" class="small">Tạo trong bộ nhớ</text>
+
+  <path class="arrow" d="M268 268H312"/><path class="arrow" d="M524 268H568"/><path class="arrow" d="M796 268H840"/><path class="arrow" d="M1070 268H1114"/>
+  <rect x="366" y="381" width="710" height="62" rx="16" fill="#f5f8fc" stroke="#e0e8f1"/>
+  <text x="721" y="408" text-anchor="middle" class="note">Mỗi lần chạy: nạp PDF → tạo lại chunks, embeddings và chỉ mục FAISS trong RAM</text>
+  <text x="721" y="429" text-anchor="middle" class="small">Không thấy bước lưu / tải chỉ mục FAISS trên đĩa trong luồng này</text>
+
+  <rect x="50" y="518" width="1340" height="416" rx="24" fill="#ffffff" opacity=".78" stroke="#e0e8f1"/>
+  <text x="78" y="555" class="lane">2 · TRUY VẤN VÀ SINH CÂU TRẢ LỜI</text>
+
+  <rect class="card" x="78" y="598" width="190" height="122" fill="#fff4df" stroke="#f0dfbe"/>
+  <text x="173" y="633" text-anchor="middle" class="head">Câu hỏi</text>
+  <text x="173" y="662" text-anchor="middle" class="body">Người dùng nhập</text>
+  <text x="173" y="686" text-anchor="middle" class="small">rag_chain.invoke()</text>
+
+  <rect class="card" x="322" y="598" width="220" height="122" fill="url(#green)" stroke="#c6e8d9"/>
+  <text x="432" y="633" text-anchor="middle" class="head">Embedding truy vấn</text>
+  <text x="432" y="662" text-anchor="middle" class="body">Cùng embedding model</text>
+  <text x="432" y="686" text-anchor="middle" class="small">qwen3-embedding:0.6b</text>
+
+  <rect class="card" x="596" y="598" width="220" height="122" fill="url(#violet)" stroke="#ded2f4"/>
+  <text x="706" y="633" text-anchor="middle" class="head">Truy xuất FAISS</text>
+  <text x="706" y="662" text-anchor="middle" class="body">Similarity search</text>
+  <text x="706" y="686" text-anchor="middle" class="small">Top 5 đoạn · k = 5</text>
+
+  <rect class="card" x="870" y="598" width="220" height="122" fill="url(#blue)" stroke="#c9daf3"/>
+  <text x="980" y="633" text-anchor="middle" class="head">Ghép ngữ cảnh</text>
+  <text x="980" y="662" text-anchor="middle" class="body">Source + page_content</text>
+  <text x="980" y="686" text-anchor="middle" class="small">Đưa vào prompt</text>
+
+  <rect class="card" x="1144" y="598" width="202" height="122" fill="#e7efff" stroke="#d2ddf3"/>
+  <text x="1245" y="633" text-anchor="middle" class="head">LLM Ollama</text>
+  <text x="1245" y="662" text-anchor="middle" class="body">qwen3:4b</text>
+  <text x="1245" y="686" text-anchor="middle" class="small">temperature = 0</text>
+
+  <path class="arrow" d="M268 659H312"/><path class="arrow" d="M542 659H586"/><path class="arrow" d="M816 659H860"/><path class="arrow" d="M1090 659H1134"/>
+
+  <path d="M1235 331V480H706V588" fill="none" stroke="#8e79ba" stroke-width="2.2" stroke-dasharray="8 7" marker-end="url(#arrow)"/>
+  <rect x="778" y="451" width="298" height="42" rx="13" fill="#f4efff" stroke="#ded2f4"/>
+  <text x="927" y="478" text-anchor="middle" class="small">FAISS đã lập chỉ mục · dùng để tìm kiếm</text>
+
+  <rect class="card" x="520" y="786" width="400" height="92" fill="#f5f8fc" stroke="#d5dfeb"/>
+  <text x="720" y="819" text-anchor="middle" class="head">Ràng buộc câu trả lời</text>
+  <text x="720" y="845" text-anchor="middle" class="body">Chỉ dựa trên context · thiếu dữ kiện thì nói rõ</text>
+  <path class="arrow" d="M1245 720V748H920V820"/>
+
+  <rect class="card" x="1000" y="786" width="300" height="92" fill="url(#green)" stroke="#c6e8d9"/>
+  <text x="1150" y="819" text-anchor="middle" class="head">Câu trả lời</text>
+  <text x="1150" y="845" text-anchor="middle" class="body">StrOutputParser → in ra terminal</text>
+  <path class="arrow" d="M920 832H990"/>
+  <text x="64" y="970" class="sub">Nguồn: loader.py · model embedding và model chat chạy qua Ollama cục bộ</text>
+</svg>
